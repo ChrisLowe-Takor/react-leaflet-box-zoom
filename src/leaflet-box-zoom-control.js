@@ -12,10 +12,11 @@ const boxZoomControlDefaultStyle = {
 	width: '32px', 
 	height: '32px',
 	marginRight: '11px',
-	border: '1px solid #ccc',
+	border: '1px solid rgba(0,0,0,0.5)',
 	borderRadius: '4px',
 	background: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAB60lEQVRIie3VPWtUQRTG8d9GjQaJLopiFDVC7LSzESWIhYiCKFiIlZWFRbCxEPwINhY2AUX8APEbCDZiExLsBFEjKeIL+AYiUXct7lyYvd65mZVoBH1gmOGcPfM/M+fcWf5lPUA3Gm+wM/iuohPsizgV7OP4XIm7mQMbiNbjFd8GrAvrLWiF9Rq0w7qNoUrcoRxwrDLjwxjFpkqCu4J9eyVuW7BfDPGzObDVNbZ5vKjYOniZ2GMhzK9zgKXiq36lqN/HfjaoxPedAIxgzy9CS+1T9Mbfq1a0vqZolAlFTZu0GacVHbxVUZ5ZTOFpv0mU3+nuJRK9jPd6v91yfMMk1vcDLoNHG6C3EsDqmMHGXPCXEDSS8E9kQssxlQs+hnMJX1v6em80wI/kwlO60LC5Bt+d1IbxA9J04oMJ+6cwv42SyInrUVON7+k9yWRij/OV373LATd19W31V/khSrpT43+egg3U2M4qano8ss0k4ofDPKj3MSo1nQLHqjvRgeDbofgDqfo7uKT+tF2cScFWReshfMdcGNOKB2NR0UTDfv6Tb+Gk+tM+wpUlj5uhQdyX/4AcXQ5oqbWKjk5dbRdfwzyPseWEw35cx0M8w2PcxQnsDdDfBm/SWARfCImuCHzuT4JL+BNFSf5rZfQD0s7CMRfyzDcAAAAASUVORK5CYII=")',
-	backgroundColor: 'rgb(255, 255, 255)'
+	backgroundColor: 'rgb(255, 255, 255)',
+	outline: 'none'
 }
 
 const boxZoomControlDefaultActiveStyle = {
@@ -52,7 +53,7 @@ L.Control.BoxZoomControl = L.Control.extend({
 	onAdd: function(map) {
 		var boxZoomButton = L.DomUtil.create('button');
 		boxZoomButton.setAttribute('style',this._style);
-
+		
 		boxZoomButton.onclick = (e) => {
 			if (this._isActive) {
 				map.dragging.enable();
@@ -98,15 +99,12 @@ L.Control.BoxZoomControl = L.Control.extend({
 						this._startLatLng.lng === e.latlng.lng ||
 						this._isActive === false) { return; }
 
-					console.log(this._startLatLng);
-					console.log(e.latlng);
 					var ne = this._startLatLng;
 					var nw = new L.LatLng(this._startLatLng.lat, e.latlng.lng);
 					var sw = e.latlng;
 					var se = new L.LatLng(e.latlng.lat, this._startLatLng.lng);
 
 					var bounds = L.latLngBounds([ne, sw])
-					console.log(bounds);
 					map.fitBounds(bounds, { animate: false });
 
 					this._startLatLng = null;
@@ -130,17 +128,13 @@ L.Control.BoxZoomControl = L.Control.extend({
 		return boxZoomButton;
 	},
 	onRemove: function(map) {
-		console.log("onRemove");
+		// Do nothing
 	}
 });
 
 L.control.boxZoomControl = (opts) => {
-	console.log(opts);
     return new L.Control.BoxZoomControl({...opts});
 }
-
-
-
 
 class BoxZoomControl extends MapControl {
 

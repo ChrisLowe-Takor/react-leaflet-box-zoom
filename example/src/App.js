@@ -18,10 +18,10 @@ export default class App extends Component {
 						attribution=""
 						url="https://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"/>
 			
-					<ZoomControl position='topright' />
+					<ZoomControl position="topright" />
 
 					<BoxZoomControl 
-						position='topright'
+						position="topright"
 						sticky={true}
 					/>
 
