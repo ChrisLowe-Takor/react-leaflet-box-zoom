@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import PropTypes from 'prop-types';
 import './styles.css';
 import {
 	withLeaflet, 
@@ -30,6 +31,8 @@ L.Control.BoxZoomControl = L.Control.extend({
 	_drawPolygon: null,
 
 	initialize: function(element) {
+		this.options.position = element.position;
+
 		if (element.style === undefined) {
 			this._style = reactToCSS(boxZoomControlDefaultStyle);
 		} else {
@@ -132,8 +135,12 @@ L.Control.BoxZoomControl = L.Control.extend({
 });
 
 L.control.boxZoomControl = (opts) => {
-    return new L.Control.BoxZoomControl(opts);
+	console.log(opts);
+    return new L.Control.BoxZoomControl({...opts});
 }
+
+
+
 
 class BoxZoomControl extends MapControl {
 
@@ -142,8 +149,15 @@ class BoxZoomControl extends MapControl {
 	}
 
 	createLeafletElement(props) {
-		return L.control.boxZoomControl( { position: 'bottomright', ...props});
+		return L.control.boxZoomControl({...props});
 	}
 }
 
 export default withLeaflet(BoxZoomControl);
+
+BoxZoomControl.propTypes = {
+	sticky: PropTypes.bool,
+	style: PropTypes.element,
+	activeStyle: PropTypes.element,
+	position: PropTypes.oneOf(['topright', 'topleft', 'bottomright', 'bottomleft'])
+}
