@@ -56,6 +56,17 @@ export default class App extends Component {
 }
 ```
 
+### Ref control
+
+You can programatically start and stop the box zoom tool by using a ref
+```javascript
+<BoxZoomControl ref={(ref) => this.boxZoomControlRef = ref} />
+
+// elsewhere
+this.boxZoomControlRef.stop();
+this.boxZoomControlRef.start();
+```
+
 
 ### Props
 
