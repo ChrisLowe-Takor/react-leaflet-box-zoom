@@ -13,7 +13,11 @@ A box zoom tool for React Leaflet.
 ### Installation
 
 
-`npm install react-leaflet-box-zoom`
+```
+npm install --save react-leaflet-box-zoom
+
+yarn install
+```
 
 ### Usage
 
@@ -57,7 +61,7 @@ export default class App extends Component {
 
 Name | Default | Description
 --- | --- | ---
-stick | `false` | Setting to `true` will cause the zoom control to remain active after the user has zoomed
+sticky | `false` | Setting to `true` will cause the zoom control to remain active after the user has zoomed
 position | `topleft` | Position of the control.  Valid values are `topleft`, `topright`, `bottomleft`, or `bottomright`
 style | | A react css style prop for the button.  You can pass in your own style such as a custom background image. The default is set to match the default Leaflet style with a box zoom icon
 activeStyle | | A react css style prop for the active state of the button. This appends to the `style` prop.
