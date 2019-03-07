@@ -5508,6 +5508,12 @@ react-is@^16.3.2:
   version "0.0.0"
   uid ""
 
+react-leaflet-coordinates@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-leaflet-coordinates/-/react-leaflet-coordinates-1.0.0.tgz#a1d5f951876aa3e47df523a695c082311b9fc744"
+  dependencies:
+    react-style-object-to-css "^1.1.2"
+
 react-leaflet@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-2.1.2.tgz#2f55055335ea97fe7bca56fe958440d9f0c871d6"

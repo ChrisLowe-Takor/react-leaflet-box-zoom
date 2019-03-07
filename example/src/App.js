@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Map, TileLayer, ZoomControl } from 'react-leaflet'
 
 import { BoxZoomControl } from 'react-leaflet-box-zoom'
+import { CoordinatesControl } from 'react-leaflet-coordinates';
 
 export default class App extends Component {
 
@@ -21,6 +22,8 @@ export default class App extends Component {
 							url="https://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"/>
 				
 						<ZoomControl position="topright" />
+
+						<CoordinatesControl />
 
 						<BoxZoomControl 
 							position="topright"

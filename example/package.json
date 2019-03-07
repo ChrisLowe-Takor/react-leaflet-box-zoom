@@ -11,6 +11,7 @@
     "react-dom": "^16.4.1",
     "react-leaflet": "^2.1.2",
     "react-leaflet-box-zoom": "link:..",
+    "react-leaflet-coordinates": "^1.0.0",
     "react-scripts": "^1.1.4"
   },
   "scripts": {

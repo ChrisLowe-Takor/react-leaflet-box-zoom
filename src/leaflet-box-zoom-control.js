@@ -30,6 +30,7 @@ L.Control.BoxZoomControl = L.Control.extend({
 	_startLatLng: null,
 	_sticky: false,
 	_drawPolygon: null,
+	_boxZoomButton: null,
 
 	initialize: function(element) {
 		this.options.position = element.position;
@@ -62,6 +63,7 @@ L.Control.BoxZoomControl = L.Control.extend({
 				this._start(map, boxZoomButton);
 			}
 		};
+		this._boxZoomButton = boxZoomButton;
 
 		return boxZoomButton;
 	},
@@ -74,8 +76,60 @@ L.Control.BoxZoomControl = L.Control.extend({
 		L.DomUtil.removeClass(map._container, 'crosshair-cursor-enabled');
 		this._isActive = false;
 		this._startLatLng = null;
-		map.removeEventListener('mousemove');
-		map.removeEventListener('mouseup');
+		
+		L.DomEvent.off(map, 'mousemove', this._handleMouseMove, this);
+		L.DomEvent.off(map, 'mouseup', this._handleMouseUp, this);
+	},
+	_handleMouseDown: function(e) {
+		this._startLatLng = e.latlng;
+	},
+	_handleMouseMove: function(e) {
+		if (this._startLatLng === null || this._startLatLng === undefined) { return; }
+
+		var ne = this._startLatLng;
+		var nw = new L.LatLng(this._startLatLng.lat, e.latlng.lng);
+		var sw = e.latlng;
+		var se = new L.LatLng(e.latlng.lat, this._startLatLng.lng);
+
+		if (this._drawPolygon === null || this._drawPolygon === undefined) {
+			this._drawPolygon = new L.Polygon([ne, nw, sw, se]);
+			this._map.addLayer(this._drawPolygon);
+		} else {
+			this._drawPolygon.setLatLngs([ne, nw, sw, se]);
+		}
+	},
+	_handleMouseUp: function(e) {
+		var map = this._map;
+		if (
+			this._startLatLng === null || 
+			this._startLatLng === undefined || 
+			this._startLatLng.lat === e.latlng.lat ||
+			this._startLatLng.lng === e.latlng.lng ||
+			this._isActive === false) { return; }
+
+		var ne = this._startLatLng;
+		var nw = new L.LatLng(this._startLatLng.lat, e.latlng.lng);
+		var sw = e.latlng;
+		var se = new L.LatLng(e.latlng.lat, this._startLatLng.lng);
+
+		var bounds = L.latLngBounds([ne, sw])
+		map.fitBounds(bounds, { animate: false });
+
+		this._startLatLng = null;
+		map.removeLayer(this._drawPolygon);
+		this._drawPolygon = null;
+
+		if (this._sticky) {
+			this._startLatLng = null;
+		} else {
+			map.dragging.enable();
+			this._boxZoomButton.setAttribute('style', this._style);
+			L.DomUtil.removeClass(map._container, 'crosshair-cursor-enabled');
+			this._isActive = false;
+
+			L.DomEvent.off(map, 'mousemove', this._handleMouseMove, this);
+			L.DomEvent.off(map, 'mouseup', this._handleMouseUp, this);
+		}
 	},
 	_start: function(map, boxZoomButton) {
 		boxZoomButton.setAttribute('style', this._style + this._activeStyle);
@@ -84,57 +138,9 @@ L.Control.BoxZoomControl = L.Control.extend({
 		this._isActive = true;
 		this._startLatLng = null;
 
-		map.on('mousedown', (e) => {
-			this._startLatLng = e.latlng;
-		});
-			
-		map.on('mousemove', (e) => {
-			if (this._startLatLng === null || this._startLatLng === undefined) { return; }
-
-			var ne = this._startLatLng;
-			var nw = new L.LatLng(this._startLatLng.lat, e.latlng.lng);
-			var sw = e.latlng;
-			var se = new L.LatLng(e.latlng.lat, this._startLatLng.lng);
-
-			if (this._drawPolygon === null || this._drawPolygon === undefined) {
-				this._drawPolygon = new L.Polygon([ne, nw, sw, se]);
-				map.addLayer(this._drawPolygon);
-			} else {
-				this._drawPolygon.setLatLngs([ne, nw, sw, se]);
-			}
-		});
-
-		map.on('mouseup', (e) => {
-			if (
-				this._startLatLng === null || 
-				this._startLatLng === undefined || 
-				this._startLatLng.lat === e.latlng.lat ||
-				this._startLatLng.lng === e.latlng.lng ||
-				this._isActive === false) { return; }
-
-			var ne = this._startLatLng;
-			var nw = new L.LatLng(this._startLatLng.lat, e.latlng.lng);
-			var sw = e.latlng;
-			var se = new L.LatLng(e.latlng.lat, this._startLatLng.lng);
-
-			var bounds = L.latLngBounds([ne, sw])
-			map.fitBounds(bounds, { animate: false });
-
-			this._startLatLng = null;
-			map.removeLayer(this._drawPolygon);
-			this._drawPolygon = null;
-
-			if (this._sticky) {
-				this._startLatLng = null;
-			} else {
-				map.dragging.enable();
-				boxZoomButton.setAttribute('style', this._style);
-				L.DomUtil.removeClass(map._container, 'crosshair-cursor-enabled');
-				this._isActive = false;
-				map.removeEventListener('mousemove');
-				map.removeEventListener('mouseup');
-			}
-		});
+		L.DomEvent.on(map, 'mousedown', this._handleMouseDown, this);
+		L.DomEvent.on(map, 'mousemove', this._handleMouseMove, this);
+		L.DomEvent.on(map, 'mouseup', this._handleMouseUp, this);
 	},
 	forceStop: function() {
 		var map = this._map;
